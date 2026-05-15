@@ -1,0 +1,26 @@
+# monitoring-values.yaml
+grafana:
+  persistence:
+    enabled: true
+    size: 5Gi
+
+prometheus:
+  prometheusSpec:
+    retention: 7d
+    resources:
+      requests:
+        cpu: 150m
+        memory: 400Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+
+# Disable heavy components to keep it light on t3.small
+alertmanager:
+  enabled: false
+
+# Enable useful components
+kubeStateMetrics:
+  enabled: true
+nodeExporter:
+  enabled: true
