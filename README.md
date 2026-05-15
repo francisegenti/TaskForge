@@ -14,7 +14,7 @@ https://main.d3ijhfwf2p1uke.amplifyapp.com/
 
 ---
 
-# 📌 Project Overview
+# Project Overview
 
 TaskForge allows users to:
 
@@ -28,7 +28,7 @@ While the frontend is lightweight, the main goal of this project was to implemen
 
 ---
 
-# 🏗️ DevOps Architecture
+# DevOps Architecture
 
 ```text
 Developer → GitHub → GitHub Actions (CI/CD)
@@ -47,7 +47,7 @@ Developer → GitHub → GitHub Actions (CI/CD)
 
 ---
 
-# ⚡ Tech Stack
+# Tech Stack
 
 ## Frontend
 - HTML5
@@ -72,7 +72,7 @@ Developer → GitHub → GitHub Actions (CI/CD)
 
 ---
 
-# 📂 Project Structure
+# Project Structure
 
 ```bash
 TaskForge/
@@ -114,7 +114,7 @@ docker run -p 3000:3000 taskforge
 
 ---
 
-# ☸️ Kubernetes Deployment
+# Kubernetes Deployment
 
 TaskForge was deployed using Kubernetes to simulate a production-grade orchestration environment.
 
@@ -133,7 +133,7 @@ kubectl apply -f kubernetes/
 
 ---
 
-# 📦 Helm Integration
+# Helm Integration
 
 Helm was used to simplify Kubernetes application deployment and management.
 
@@ -151,7 +151,7 @@ helm upgrade taskforge ./helm
 
 ---
 
-# 🏗️ Terraform Infrastructure
+# Terraform Infrastructure
 
 Infrastructure provisioning was automated using Terraform.
 
@@ -170,7 +170,7 @@ terraform apply
 
 ---
 
-# 🔄 CI/CD Pipeline
+# CI/CD Pipeline
 
 A complete CI/CD pipeline was implemented using GitHub Actions.
 
@@ -190,7 +190,7 @@ Push Code → GitHub Actions → Build → Test → Deploy
 
 ---
 
-# 📊 Monitoring & Observability
+# Monitoring & Observability
 
 Monitoring was implemented using:
 
@@ -227,7 +227,7 @@ The frontend application was deployed publicly using AWS Amplify.
 
 ---
 
-# 🚀 Deployment Workflow
+# Deployment Workflow
 
 ```text
 Code Changes
@@ -247,7 +247,7 @@ AWS Amplify Public Hosting
 
 ---
 
-# 🧠 What I Learned
+# What I Learned
 
 Through this project, I gained hands-on experience with:
 
@@ -263,19 +263,7 @@ Through this project, I gained hands-on experience with:
 
 ---
 
-# 🔮 Future Improvements
-
-- Add backend integration
-- Add authentication system
-- Implement database support
-- Add user collaboration features
-- Configure custom domain
-- Improve monitoring dashboards
-- Add autoscaling
-
----
-
-# 👨‍💻 Author
+# Author
 
 ## Francis Egenti
 
