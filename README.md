@@ -1,4 +1,4 @@
-# TaskForge 🚀
+# TaskForge
 ### DevOps-Driven Task Management Platform
 
 TaskForge is a modern task management web application built with a strong focus on **DevOps, Cloud Infrastructure, CI/CD automation, containerization, orchestration, monitoring, and scalability**.
