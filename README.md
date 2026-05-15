@@ -11,7 +11,7 @@ This project demonstrates how a simple frontend application can be transformed i
 ## 🌐 Live Demo
 
 **Public URL:**  
-https://main.d2gxw38hz00ucs.amplifyapp.com
+https://main.d3ijhfwf2p1uke.amplifyapp.com/
 
 ---
 
