@@ -1,0 +1,6 @@
+apiVersion: v2
+name: taskforge
+description: TaskForge - Static Task Management Web App
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
