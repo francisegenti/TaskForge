@@ -192,14 +192,10 @@ Through this project, I gained hands-on experience with:
 👨‍💻 Author
 Francis Egenu
 	•	GitHub: Francis Egenu GitHub
-	•	LinkedIn: Add your LinkedIn profile here
-
+	•	LinkedIn: https://www.linkedin.com/in/francis-egenti-1537442a7?trk=contact-info
 ⭐ Support
 If you found this project helpful, feel free to:
 	•	Star the repository
 	•	Fork the project
 	•	Share feedback
 	•	Connect with me
-
-📜 License
-This project is licensed under the MIT License.
