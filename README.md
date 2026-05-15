@@ -1,4 +1,3 @@
-[README (1).md](https://github.com/user-attachments/files/27807420/README.1.md)
 # TaskForge 🚀
 ### DevOps-Driven Task Management Platform
 
