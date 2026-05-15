@@ -1,8 +1,5 @@
-# main.tf
-
 data "aws_availability_zones" "available" {}
 
-# VPC Module
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0"
@@ -18,7 +15,6 @@ module "vpc" {
   single_nat_gateway = true
 }
 
-# EKS Module
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 20.0"
@@ -33,7 +29,6 @@ module "eks" {
 
   enable_cluster_creator_admin_permissions = true
 
-  # Node Group
   eks_managed_node_groups = {
     default = {
       min_size       = 1
@@ -45,16 +40,6 @@ module "eks" {
   }
 }
 
-# Data sources - Commented out until cluster is created
-# data "aws_eks_cluster" "cluster" {
-#   name = module.eks.cluster_name
-# }
-
-# data "aws_eks_cluster_auth" "cluster" {
-#   name = module.eks.cluster_name
-# }
-
-# Outputs
 output "cluster_endpoint" {
   value = module.eks.cluster_endpoint
 }
