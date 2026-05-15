@@ -15,11 +15,9 @@ prometheus:
         cpu: 500m
         memory: 1Gi
 
-# Disable heavy components to keep it light on t3.small
 alertmanager:
   enabled: false
 
-# Enable useful components
 kubeStateMetrics:
   enabled: true
 nodeExporter:

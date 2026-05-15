@@ -1,11 +1,8 @@
-# OS
 .DS_Store
 Thumbs.db
 
-# Logs
 *.log
 
-# Terraform
 .terraform/
 *.tfstate
 *.tfstate.*
