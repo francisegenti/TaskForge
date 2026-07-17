@@ -7,13 +7,6 @@ This project demonstrates how a simple frontend application can be transformed i
 
 ---
 
-## 🌐 Live Demo
-
-**Public URL:**  
-https://main.d3ijhfwf2p1uke.amplifyapp.com/
-
----
-
 # Project Overview
 
 TaskForge allows users to:
