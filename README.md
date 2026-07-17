@@ -1,13 +1,14 @@
 # TaskForge
+
 ### DevOps-Driven Task Management Platform
 
-TaskForge is a modern task management web application built with a strong focus on **DevOps, Cloud Infrastructure, CI/CD automation, containerization, orchestration, monitoring, and scalability**.
+TaskForge is a task management web application built to demonstrate a complete, production-style DevOps workflow: containerization, CI/CD, orchestration, package management, infrastructure as code, and monitoring, wrapped around a lightweight static frontend.
 
-This project demonstrates how a simple frontend application can be transformed into a production-style cloud-native deployment pipeline using modern DevOps tools and practices.
+The frontend itself (HTML, CSS, JavaScript) is intentionally simple. The focus of this project is the deployment pipeline and cloud infrastructure around it.
 
 ---
 
-# Project Overview
+## Project Overview
 
 TaskForge allows users to:
 
@@ -17,263 +18,215 @@ TaskForge allows users to:
 - Improve productivity
 - Access a clean and responsive interface
 
-While the frontend is lightweight, the main goal of this project was to implement a **complete DevOps workflow and deployment architecture**.
-
 ---
 
-# DevOps Architecture
+## Architecture
 
 ```text
-Developer → GitHub → GitHub Actions (CI/CD)
-                ↓
-         Docker Containerization
-                ↓
-        Kubernetes Deployment
-                ↓
-             Helm Charts
-                ↓
-        Monitoring & Observability
-        (Prometheus + Grafana)
-                ↓
-          AWS Amplify Hosting
+Developer -> GitHub -> GitHub Actions (CI/CD)
+                 |
+        Docker image build and push (GHCR)
+                 |
+         Kubernetes deployment (EKS)
+                 |
+              Helm chart
+                 |
+     Monitoring and observability (Prometheus + Grafana)
 ```
+
+Infrastructure (VPC and EKS cluster) is provisioned with Terraform. The application is packaged as a Docker image, deployed to Kubernetes via a Helm chart, and served through an Nginx ingress.
 
 ---
 
-# Tech Stack
+## Tech Stack
 
-## Frontend
+**Frontend**
 - HTML5
 - CSS3
 - JavaScript
 
-## DevOps & Cloud
+**Web server / container**
+- Nginx (Alpine base image)
 - Docker
+
+**Orchestration**
 - Kubernetes
 - Helm
-- GitHub Actions
-- Terraform
-- AWS Amplify
 
-## Monitoring & Observability
+**CI/CD**
+- GitHub Actions
+- GitHub Container Registry (GHCR)
+
+**Infrastructure as Code**
+- Terraform
+- AWS (VPC, EKS)
+
+**Monitoring**
 - Prometheus
 - Grafana
 
-## Version Control
-- Git
-- GitHub
-
 ---
 
-# Project Structure
+## Project Structure
 
-```bash
+```text
 TaskForge/
-│
-├── .github/workflows/     # GitHub Actions CI/CD pipelines
-├── helm/                  # Helm chart configuration
-├── terraform/             # Infrastructure as Code
-├── monitoring/            # Prometheus & Grafana configs
-├── kubernetes/            # Kubernetes manifests
-├── Dockerfile             # Docker container setup
-├── index.html             # Main HTML page
-├── style.css              # Styling
-├── script.js              # Frontend logic
+├── .github/workflows/         # GitHub Actions CI/CD pipeline (deploy.yaml)
+├── helm/
+│   ├── taskforge/              # Helm chart (Chart.yaml, values.yaml, templates/)
+│   └── monitoring-values.yaml  # Values for the monitoring stack
+├── terraform/                  # AWS infrastructure (VPC, EKS) as code
+├── Dockerfile                  # Container build definition
+├── nginx.conf                  # Nginx server configuration
+├── index.html                  # Main HTML page
+├── style.css                   # Styling
+├── script.js                   # Frontend logic
 └── README.md
 ```
 
 ---
 
-# 🐳 Docker Containerization
+## Prerequisites
 
-The application was containerized using Docker to ensure:
+Depending on which part of the stack you want to run, you will need:
 
-- Environment consistency
-- Easy deployment
-- Scalability
-- Faster development workflow
+**To run the app locally (static files only)**
+- A modern web browser
+- Optionally, any static file server (e.g. `python3 -m http.server`)
 
-### Build Docker Image
+**To build and run the container**
+- Docker (20.x or later)
+
+**To deploy to Kubernetes**
+- A running Kubernetes cluster (local, e.g. Minikube/Kind, or remote, e.g. EKS)
+- `kubectl` configured to point at that cluster
+- Helm 3.x
+- An Nginx ingress controller installed on the cluster (the Helm chart's ingress uses `className: nginx`)
+
+**To provision the cloud infrastructure**
+- An AWS account with credentials configured (e.g. via `aws configure`)
+- Terraform (1.0 or later)
+- Sufficient AWS IAM permissions to create a VPC, subnets, and an EKS cluster
+
+**To use the CI/CD pipeline**
+- A GitHub repository with Actions enabled
+- No extra secrets are required beyond the default `GITHUB_TOKEN`, which is used to push images to GHCR
+
+**For monitoring**
+- Prometheus and Grafana installed on the cluster (e.g. via the kube-prometheus-stack Helm chart), since the app's `ServiceMonitor` expects a Prometheus Operator to already be present
+
+---
+
+## Running Locally (static files)
+
+Open `index.html` directly in a browser, or serve the folder:
+
+```bash
+python3 -m http.server 8080
+```
+
+Then visit `http://localhost:8080`.
+
+---
+
+## Docker
+
+### Build the image
 
 ```bash
 docker build -t taskforge .
 ```
 
-### Run Container
+### Run the container
+
+The image serves the app with Nginx on port 80:
 
 ```bash
-docker run -p 3000:3000 taskforge
+docker run -p 8080:80 taskforge
 ```
+
+Then visit `http://localhost:8080`. A health check endpoint is available at `/health`.
 
 ---
 
-# Kubernetes Deployment
+## Kubernetes and Helm
 
-TaskForge was deployed using Kubernetes to simulate a production-grade orchestration environment.
+The application is deployed via the Helm chart under `helm/taskforge`.
 
-Features include:
-
-- Pod management
-- Replica scaling
-- Service exposure
-- Declarative deployments
-
-### Apply Kubernetes Resources
+### Install
 
 ```bash
-kubectl apply -f kubernetes/
+helm install taskforge ./helm/taskforge
 ```
+
+### Upgrade
+
+```bash
+helm upgrade taskforge ./helm/taskforge
+```
+
+### Key values (`helm/taskforge/values.yaml`)
+
+- `replicaCount`: number of pod replicas (default: 2)
+- `image.repository`: container image to deploy (default: `ghcr.io/francisegenti/taskforge`)
+- `service.port`: service port (default: 80)
+- `ingress.host`: hostname the ingress should route (update this to your own domain)
+- `serviceMonitor.enabled`: whether to create a Prometheus `ServiceMonitor` (requires the Prometheus Operator CRDs to be installed on the cluster)
 
 ---
 
-# Helm Integration
+## Terraform (AWS Infrastructure)
 
-Helm was used to simplify Kubernetes application deployment and management.
-
-### Install Helm Chart
+Terraform provisions a VPC and an EKS cluster in AWS.
 
 ```bash
-helm install taskforge ./helm
-```
-
-### Upgrade Deployment
-
-```bash
-helm upgrade taskforge ./helm
-```
-
----
-
-# Terraform Infrastructure
-
-Infrastructure provisioning was automated using Terraform.
-
-Terraform was used to:
-- Manage cloud resources
-- Provision infrastructure consistently
-- Enable Infrastructure as Code (IaC)
-
-### Terraform Commands
-
-```bash
+cd terraform
 terraform init
 terraform plan
 terraform apply
 ```
 
----
+Default configuration (see `variables.tf`):
 
-# CI/CD Pipeline
+- Region: `eu-west-2`
+- Cluster name: `taskforge`
+- Node group: 1-2 `t3.small` instances
 
-A complete CI/CD pipeline was implemented using GitHub Actions.
-
-### Pipeline Features
-
-✅ Automated Builds  
-✅ Docker Image Creation  
-✅ Deployment Automation  
-✅ Continuous Integration  
-✅ Continuous Delivery  
-
-### CI/CD Workflow
-
-```text
-Push Code → GitHub Actions → Build → Test → Deploy
-```
+Override these with `-var` flags or a `terraform.tfvars` file as needed.
 
 ---
 
-# Monitoring & Observability
+## CI/CD Pipeline
 
-Monitoring was implemented using:
+Defined in `.github/workflows/deploy.yaml`. On every push or pull request to `main`, the workflow:
 
-## Prometheus
-Used for:
-- Metrics collection
-- Application monitoring
-- Kubernetes monitoring
-
-## Grafana
-Used for:
-- Visualization dashboards
-- Real-time metrics
-- Performance insights
-
-### Monitoring Stack
-
-```text
-Application → Prometheus → Grafana Dashboard
-```
+1. Checks out the code
+2. Logs in to the GitHub Container Registry (GHCR)
+3. Builds the Docker image
+4. Pushes the image to GHCR, tagged as `latest` and with the commit SHA (push to `main` only; pull requests build but do not push)
 
 ---
 
-# ☁️ AWS Amplify Deployment
+## Monitoring
 
-The frontend application was deployed publicly using AWS Amplify.
-
-### Why Amplify?
-- Fast deployment
-- Easy GitHub integration
-- Automatic deployments
-- HTTPS enabled
-- Scalable hosting
+The Helm chart can create a `ServiceMonitor` for the app, intended to be scraped by a Prometheus Operator installed separately on the cluster (see `helm/monitoring-values.yaml` for related configuration). Grafana can then be pointed at that Prometheus instance to visualize metrics.
 
 ---
 
-# Deployment Workflow
+## What This Project Demonstrates
 
-```text
-Code Changes
-     ↓
-Push to GitHub
-     ↓
-GitHub Actions CI/CD
-     ↓
-Docker Build
-     ↓
-Kubernetes Deployment
-     ↓
-Monitoring with Prometheus/Grafana
-     ↓
-AWS Amplify Public Hosting
-```
+- Docker containerization of a static web app
+- Kubernetes orchestration with Helm packaging
+- CI/CD automation with GitHub Actions
+- Infrastructure as Code with Terraform on AWS
+- Monitoring and observability with Prometheus and Grafana
+- End-to-end deployment workflow from commit to running cluster
 
 ---
 
-# What I Learned
+## Author
 
-Through this project, I gained hands-on experience with:
-
-- Docker containerization
-- Kubernetes orchestration
-- Helm package management
-- CI/CD automation
-- Infrastructure as Code with Terraform
-- Monitoring and observability
-- AWS cloud deployment
-- GitHub Actions workflows
-- DevOps best practices
-
----
-
-# Author
-
-## Francis Egenti
+**Francis Egenti**
 
 - GitHub: https://github.com/francisegenti
-- LinkedIn: https://www.linkedin.com/in/francis-egenti-1537442a7?trk=contact-info
-
----
-
-# ⭐ Support
-
-If you found this project helpful, feel free to:
-
-- Star the repository
-- Fork the project
-- Share feedback
-- Connect with me
-
----
-
-
+- LinkedIn: https://www.linkedin.com/in/francis-egenti-1537442a7
